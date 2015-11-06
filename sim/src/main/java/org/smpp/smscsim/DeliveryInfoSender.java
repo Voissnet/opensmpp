@@ -93,6 +93,9 @@ public class DeliveryInfoSender extends ProcessingThread {
 		msg += "stat:" + states[entry.stat] + " ";
 		msg += "err:" + entry.err + " ";
 		String shortMessage = submit.getShortMessage();
+		if (shortMessage == null) {//Abandoning: OpenSPPM is not prepared to deal with a null message.
+			debug.exit(this);
+		}
 		int msgLen = shortMessage.length();
 		msg += "text:" + shortMessage.substring(0, (msgLen > 20 ? 20 : msgLen));
 		try {
