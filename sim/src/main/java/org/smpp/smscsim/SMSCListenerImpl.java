@@ -37,6 +37,11 @@ public class SMSCListenerImpl extends SmppObject implements Runnable, SMSCListen
 	private boolean keepReceiving = true;
 	private boolean isReceiving = false;
 	private boolean asynchronous = false;
+	java.util.concurrent.ExecutorService executorService = java.util.concurrent.Executors.newFixedThreadPool(
+			Integer.parseInt(System.getProperty("smsc.session.pool.size","1"))
+		);
+
+
 
 	/**
 	 * Construct synchronous listener listening on the given port.
@@ -106,6 +111,7 @@ public class SMSCListenerImpl extends SmppObject implements Runnable, SMSCListen
 		}
 		serverConn.close();
 		debug.write("SMSCListener stopped on port " + port);
+		executorService.shutdown();
 	}
 
 	/**
@@ -159,8 +165,7 @@ public class SMSCListenerImpl extends SmppObject implements Runnable, SMSCListen
 					pduProcessor = processorFactory.createPDUProcessor(session);
 				}
 				session.setPDUProcessor(pduProcessor);
-				Thread thread = new Thread(session);
-				thread.start();
+				executorService.submit(session);
 				debug.write("SMSCListener launched a session on the accepted connection.");
 			} else {
 				debug.write(Simulator.DSIMD2, "no connection accepted this time.");
