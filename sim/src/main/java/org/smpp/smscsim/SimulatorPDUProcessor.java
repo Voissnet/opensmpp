@@ -83,7 +83,7 @@ public class SimulatorPDUProcessor extends PDUProcessor {
 	/**
 	 * System id of this simulator sent to the ESME in bind response.
 	 */
-	private static final String SYSTEM_ID = "Smsc Simulator";
+	private static final String SYSTEM_ID = "Smsc Redvoiss";
 
 	/**
 	 * The name of attribute which contains the system id of ESME.
@@ -265,13 +265,6 @@ public class SimulatorPDUProcessor extends PDUProcessor {
 	 * @param response the response to send to client
 	 */
 	public void serverResponse(Response response) throws IOException, PDUException {
-		synchronized(this) {
-			try {
-				// Sleep for 300 ms sending reply to more accuratly simulate smsc
-				this.wait(300);
-			} catch( Exception e ) { e.printStackTrace(); }
-		}
-
 		debug.write("SimulatorPDUProcessor.serverResponse() " + response.debugString());
 		display("server response: " + response.debugString());
 		session.send(response);
