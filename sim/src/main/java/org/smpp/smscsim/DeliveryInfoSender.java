@@ -78,12 +78,12 @@ public class DeliveryInfoSender extends ProcessingThread {
 		debug.enter(this, "deliver");
 		SubmitSM submit = entry.submit;
 		DeliverSM deliver = new DeliverSM();
-                deliver.setEsmClass((byte)Data.SM_SMSC_DLV_RCPT_TYPE);
+        deliver.setEsmClass((byte)Data.SM_SMSC_DLV_RCPT_TYPE);
                 
-		deliver.setSourceAddr(submit.getDestAddr());
+		deliver.setSourceAddr(submit.getSourceAddr());
 		deliver.setDestAddr(submit.getDestAddr());
                 
-                deliver.setDataCoding((byte) 0x03); // ISO-Latin-1
+        deliver.setDataCoding((byte) 0x03); // ISO-Latin-1
 		String msg = "";
 		msg += "id:" + entry.messageId + " ";
 		msg += "sub:" + entry.sub + " ";
