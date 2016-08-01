@@ -90,22 +90,25 @@ public class ShortMessageStore {
 	/**
 	 * Prints all messages currently stored in the message store.
 	 */
-	public synchronized void print() {
+	public synchronized String print() {
+		StringBuffer sb = new StringBuffer();
 		if (messages.size() != 0) {
 			ShortMessageValue sMV;
 			Enumeration<String> keys = messages.keys();
 			Object key;
-			System.out.println("------------------------------------------------------------------------");
-			System.out.println("| Msg Id   |Sender     |ServT|Source address |Dest address   |Message   ");
-			System.out.println("------------------------------------------------------------------------");
+			sb.append("\n\n------------------------------------------------------------------------\n");
+			sb.append("| Msg Id   |Sender     |ServT|Source address |Dest address   |Message   \n");
+			sb.append("------------------------------------------------------------------------\n");
 			while (keys.hasMoreElements()) {
 				key = keys.nextElement();
 				sMV = (ShortMessageValue) messages.get(key);
-				printMessage(key, sMV);
+				sb.append(printMessage(key, sMV));
 			}
+			System.out.println(sb.toString());
 		} else {
 			System.out.println("There is no message in the message store.");
 		}
+		return sb.toString();
 	}
 
 	/**
@@ -114,7 +117,7 @@ public class ShortMessageStore {
 	 * @param key the key (message id) of the message
 	 * @param sMV the message to print
 	 */
-	private void printMessage(Object key, ShortMessageValue sMV) {
+	private String printMessage(Object key, ShortMessageValue sMV) {
 		String messageId, systemId, serviceType, sourceAddr, destAddr, shortMessage;
 
 		messageId = key.toString();
@@ -128,7 +131,7 @@ public class ShortMessageStore {
 		sourceAddr = pad(sMV.sourceAddr, 15);
 		destAddr = pad(sMV.destinationAddr, 15);
 		shortMessage = sMV.shortMessage;
-		System.out.println(
+		final String ret = 
 			"- "
 				+ messageId
 				+ " |"
@@ -140,7 +143,9 @@ public class ShortMessageStore {
 				+ "|"
 				+ destAddr
 				+ "|"
-				+ shortMessage);
+				+ shortMessage
+				+ "\n";
+		return ret;
 	}
 
 	private String pad(String data, int length) {
