@@ -200,7 +200,7 @@ public class Simulator {
 			System.out.print("Starting listener... ");
 			smscListener = new SMSCListenerImpl(port, true);
 			processors = new PDUProcessorGroup();
-			messageStore = new ShortMessageStore();
+			messageStore = new ShortMessageStoreImpl();
 			deliveryInfoSender = new DeliveryInfoSender();
 			deliveryInfoSender.start();
 			users = new Table(usersFileName);
