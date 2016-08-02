@@ -360,6 +360,10 @@ public class SimulatorPDUProcessor extends PDUProcessor {
 		this.deliveryInfoSender = deliveryInfoSender;
 	}
 
+	public DeliveryInfoSender getDeliveryInfoSender() {
+		return deliveryInfoSender;
+	}
+
 	private void display(String info) {
 		if (getDisplayInfo()) {
 			String sysId = getSystemId();
