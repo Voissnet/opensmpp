@@ -10,6 +10,8 @@
  */
 package org.smpp.smscsim;
 
+import java.util.concurrent.ThreadLocalRandom;
+
 import java.io.IOException;
 
 import org.smpp.*;
@@ -314,10 +316,7 @@ public class SimulatorPDUProcessor extends PDUProcessor {
 	 * @return unique message id
 	 */
 	private String assignMessageId() {
-		String messageId = "Smsc";
-		intMessageId++;
-		messageId += intMessageId;
-		return messageId;
+		return Integer.toHexString( ThreadLocalRandom.current().nextInt(Integer.MAX_VALUE) );
 	}
 
 	/**
