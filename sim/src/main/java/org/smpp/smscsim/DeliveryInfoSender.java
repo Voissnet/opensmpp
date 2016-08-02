@@ -65,6 +65,10 @@ public class DeliveryInfoSender extends ProcessingThread {
 
 	private Queue submitRequests = new Queue();
 
+	public Queue getQueue() {
+		return submitRequests;
+	}
+
 	public void submit(PDUProcessor processor, SubmitSM submitRequest, String messageId, int stat, int err) {
 		DeliveryInfoEntry entry = new DeliveryInfoEntry(processor, submitRequest, stat, err, messageId);
 		submitRequests.enqueue(entry);
@@ -74,7 +78,7 @@ public class DeliveryInfoSender extends ProcessingThread {
 		submit(processor, submitRequest, messageId, DELIVERED, 0);
 	}
 
-	private void deliver(DeliveryInfoEntry entry) {
+	protected void deliver(DeliveryInfoEntry entry) {
 		debug.enter(this, "deliver");
 		SubmitSM submit = entry.submit;
 		DeliverSM deliver = new DeliverSM();
@@ -82,6 +86,13 @@ public class DeliveryInfoSender extends ProcessingThread {
                 
 		deliver.setSourceAddr(submit.getSourceAddr());
 		deliver.setDestAddr(submit.getDestAddr());
+
+		try { 
+			deliver.setReceiptedMessageId(entry.messageId); 
+		} catch (org.smpp.pdu.tlv.WrongLengthException e) { 
+			e.printStackTrace(); 
+		}
+		deliver.setMessageState((byte)Data.SM_STATE_ACCEPTED);
                 
         deliver.setDataCoding((byte) 0x03); // ISO-Latin-1
 		String msg = "";
@@ -103,10 +114,12 @@ public class DeliveryInfoSender extends ProcessingThread {
 			deliver.setShortMessage(msg);
 			deliver.setServiceType(submit.getServiceType());
 		} catch (WrongLengthOfStringException e) {
+			e.printStackTrace();
 		}
 		try {
 			entry.processor.serverRequest(deliver);
 		} catch (Exception e) {
+			e.printStackTrace();
 		}
 		debug.exit(this);
 	}
