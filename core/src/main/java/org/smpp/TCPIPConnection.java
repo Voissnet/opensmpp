@@ -243,6 +243,9 @@ public class TCPIPConnection extends Connection {
 			if (connType == CONN_CLIENT) {
 				try {
 					socket = socketFactory.createSocket();
+					if( System.getProperty("bind.address") != null ) {
+						socket.bind( new java.net.InetSocketAddress( java.net.InetAddress.getByName(System.getProperty("bind.address")), 0) );
+					}
 					socket.connect(new InetSocketAddress(address,port), this.getConnectionTimeout());
 					initialiseIOStreams(socket);
 					opened = true;
@@ -254,7 +257,11 @@ public class TCPIPConnection extends Connection {
 				}
 			} else if (connType == CONN_SERVER) {
 				try {
-					receiverSocket = serverSocketFactory.createServerSocket(port);
+					if( System.getProperty("bind.address") == null ) {
+						receiverSocket = serverSocketFactory.createServerSocket(port);
+					} else {
+						receiverSocket = serverSocketFactory.createServerSocket(port, 0, java.net.InetAddress.getByName(System.getProperty("bind.address")));//Queue default number of connections
+					}
 					opened = true;
 					debug.write(DCOM, "listening tcp/ip on port " + port);
 				} catch (IOException e) {
