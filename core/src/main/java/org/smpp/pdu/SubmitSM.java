@@ -131,7 +131,23 @@ public class SubmitSM extends Request {
 		setReplaceIfPresentFlag(buffer.removeByte());
 		setDataCoding(buffer.removeByte());
 		setSmDefaultMsgId(buffer.removeByte());
-		setSmLength(decodeUnsigned(buffer.removeByte()));
+		if( (getEsmClass() & Data.SM_UDH_GSM) == Data.SM_UDH_GSM ) { //Concatenated SMS
+			final short smLength = decodeUnsigned(buffer.removeByte());
+			final short udhLength = decodeUnsigned(buffer.removeByte());
+			assert smLength > udhLength;
+			setSmLength((short)(smLength-udhLength-1));
+			if( true ) { 
+				buffer.removeBuffer( udhLength );
+			} else {
+				final short ieIdentifier = decodeUnsigned(buffer.removeByte());
+				final short ieDataLength = decodeUnsigned(buffer.removeByte());
+				final short msgId = decodeUnsigned(buffer.removeByte());
+				final short msgParts = decodeUnsigned(buffer.removeByte());
+				final short msgPart = decodeUnsigned(buffer.removeByte());
+			}
+		} else {
+			setSmLength(decodeUnsigned(buffer.removeByte()));
+		}
 		shortMessage.setData(buffer.removeBuffer(getSmLength()));
 	}
 
