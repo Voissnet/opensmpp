@@ -49,7 +49,7 @@ public class ShortMessageStore {
 	 * @see ShortMessageValue
 	 * @see org.smpp.pdu.SubmitSM
 	 */
-	public synchronized void submit(SubmitSM message, String messageId, String systemId) throws UnsupportedEncodingException {
+	public synchronized void submit(SubmitSM message, String messageId, String systemId) throws UnsupportedEncodingException, ShortMessageStoreException {
 		messages.put(messageId, new ShortMessageValue(systemId, message));
 	}
 
