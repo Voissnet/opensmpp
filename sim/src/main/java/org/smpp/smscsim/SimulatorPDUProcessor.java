@@ -178,11 +178,16 @@ public class SimulatorPDUProcessor extends PDUProcessor {
 							SubmitSMResp submitResponse = (SubmitSMResp) response;
 							submitResponse.setMessageId(assignMessageId());
 							display("putting message into message store");
-							messageStore.submit((SubmitSM) request, submitResponse.getMessageId(), systemId);
-							byte registeredDelivery =
-								(byte) (((SubmitSM) request).getRegisteredDelivery() & Data.SM_SMSC_RECEIPT_MASK);
-							if (registeredDelivery == Data.SM_SMSC_RECEIPT_REQUESTED) {
-								deliveryInfoSender.submit(this, (SubmitSM) request, submitResponse.getMessageId());
+							try {
+								messageStore.submit((SubmitSM) request, submitResponse.getMessageId(), systemId);
+								byte registeredDelivery =
+									(byte) (((SubmitSM) request).getRegisteredDelivery() & Data.SM_SMSC_RECEIPT_MASK);
+								if (registeredDelivery == Data.SM_SMSC_RECEIPT_REQUESTED) {
+									deliveryInfoSender.submit(this, (SubmitSM) request, submitResponse.getMessageId());
+								}
+							} catch (ShortMessageStoreException smse) {
+								event.write(smse, "");
+								response.setCommandStatus(Data.ESME_RSUBMITFAIL);
 							}
 							break;
 
