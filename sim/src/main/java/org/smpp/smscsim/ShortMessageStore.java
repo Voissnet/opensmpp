@@ -4,7 +4,7 @@ import org.smpp.pdu.SubmitSM;
 import org.smpp.smscsim.ShortMessageValue;
 
 public interface ShortMessageStore {
-	void submit(SubmitSM message, String messageId, String systemId);
+	void submit(SubmitSM message, String messageId, String systemId) throws ShortMessageStoreException;
 
 	void cancel(String messageId);
 
@@ -13,5 +13,10 @@ public interface ShortMessageStore {
 	ShortMessageValue getMessage(String messageId);
 
 	String print();
-
+	
+	class ShortMessageStoreException extends Exception {
+		public ShortMessageStoreException(Throwable t) {
+			super( t );
+		}
+	}
 }

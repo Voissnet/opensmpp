@@ -48,7 +48,7 @@ public class ShortMessageStoreImpl implements ShortMessageStore {
 	 * @see ShortMessageValue
 	 * @see org.smpp.pdu.SubmitSM
 	 */
-	public synchronized void submit(SubmitSM message, String messageId, String systemId) {
+	public synchronized void submit(SubmitSM message, String messageId, String systemId) throws ShortMessageStore.ShortMessageStoreException {
 		messages.put(messageId, new ShortMessageValue(systemId, message));
 	}
 
