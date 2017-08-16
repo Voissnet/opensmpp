@@ -10,6 +10,7 @@
  */
 package org.smpp.smscsim;
 
+import java.io.IOException;
 import java.util.Date;
 import java.text.SimpleDateFormat;
 
@@ -18,6 +19,7 @@ import org.smpp.SmppObject;
 import org.smpp.debug.Debug;
 import org.smpp.pdu.DeliverSM;
 import org.smpp.pdu.SubmitSM;
+import org.smpp.pdu.PDUException;
 import org.smpp.pdu.WrongLengthOfStringException;
 import org.smpp.util.ProcessingThread;
 import org.smpp.util.Queue;
@@ -118,8 +120,10 @@ public class DeliveryInfoSender extends ProcessingThread {
 		}
 		try {
 			entry.processor.serverRequest(deliver);
-		} catch (Exception e) {
-			e.printStackTrace();
+		} catch (PDUException pdue) {
+			pdue.printStackTrace();
+		} catch (IOException ioe) {
+			entry.processor.stop();
 		}
 		debug.exit(this);
 	}
@@ -131,7 +135,7 @@ public class DeliveryInfoSender extends ProcessingThread {
 					submitRequests.wait(waitForQueueInterval);
 				}
 			} catch (InterruptedException e) {
-				// it's ok to be interrupted when waiting
+				e.printStackTrace();
 			}
 		} else {
 			while (!submitRequests.isEmpty()) {
