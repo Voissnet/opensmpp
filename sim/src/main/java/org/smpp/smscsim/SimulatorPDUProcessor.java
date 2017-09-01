@@ -287,7 +287,7 @@ public class SimulatorPDUProcessor extends PDUProcessor {
 	 * @return status code of the authentication; ESME_ROK if authentication
 	 *         passed
 	 */
-	private int checkIdentity(BindRequest request) {
+	protected int checkIdentity(BindRequest request) {
 		int commandStatus = Data.ESME_ROK;
 		Record user = users.find(SYSTEM_ID_ATTR, request.getSystemId());
 		if (user != null) {
